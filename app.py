@@ -104,7 +104,7 @@ async def query_request(questions_group, embeddings_group, top):
 
 async def get_context(query, k, top):
     queries = await gen_queries(query, k)
-    queries = queries + ['query']
+    queries = queries + [query]
     embeddings = await embed(queries)
     return queries, await query_request(queries, embeddings, top)
 
