@@ -22,12 +22,20 @@ uv sync
 docker compose up -d
 ```
 
-### 3. Запуск языковой модели
+### 3. Подготовка данных
 ```bash
-vllm serve "Qwen/Qwen3-8B" --gpu-memory-utilization 0.2 --max_model_len 5000
+# Предобработка JSON в CSV
+uv run prepare_data.py --input data/scraped_pages.json --output data/buffer_table.csv --chunk-size 300
+# Заполнение Qdrant
+uv run fill_qdrant.py --csv-path data/buffer_table.csv --collection-name Docs_Dense --embedding-batch-size 2048    
 ```
 
-### 4. Запуск модели эмбеддингов
+### 4. Запуск языковой модели
+```bash
+vllm serve "Qwen/Qwen3-8B" --gpu-memory-utilization 0.19 --max_model_len 5000
+```
+
+### 5. Запуск модели эмбеддингов
 ```bash
 vllm serve jinaai/jina-embeddings-v4-vllm-retrieval \
     --task embed \
@@ -37,9 +45,9 @@ vllm serve jinaai/jina-embeddings-v4-vllm-retrieval \
     --dtype auto --port 8004
 ```
 
-### 5. Запуск RAG API
+### 6. Запуск RAG API
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 7999
+uv run -- uvicorn app:app --reload --port 7998 --host 127.0.0.1    
 ```
 
 ## Тестирование
@@ -49,14 +57,14 @@ uvicorn app:app --host 0.0.0.0 --port 7999
 import requests
 
 response = requests.post("http://localhost:7999/rag", json={
-    "query": "Как создать новый курс в Moodle?",
+    "query": "Как массово задать домашку ученикам?",
     "k": 3,
-    "top": 5
+    "n": 3,
+    "top": 15
 })
 
 print(response.json())
 ```
-
 
 ## API Endpoints
 
@@ -65,6 +73,6 @@ POST /rag - основной endpoint для RAG-запросов
 Параметры:
 - query (str): вопрос пользователя
 - history (list, optional): история диалога в формате [{role, content}]
-- k, top (int): параметры поиска
+- k, n, top (int): параметры поиска
 
 Ответ: {answer: str, context: list}
