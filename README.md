@@ -69,6 +69,7 @@ print(response.json())
 ## API Endpoints
 
 POST /rag - основной endpoint для RAG-запросов
+localhost:7998/docs - UI для тестирования api
 
 Параметры:
 - query (str): вопрос пользователя
