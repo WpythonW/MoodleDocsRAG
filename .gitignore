@@ -1,0 +1,8 @@
+.DS_Store
+**/__pycache__/
+*.pyc
+data/
+!data/scraped_pages.json
+qdrant_data/
+# Virtual environments
+.venv
