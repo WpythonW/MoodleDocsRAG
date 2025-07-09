@@ -51,7 +51,6 @@ async def gen_queries(q: str, k: int = 5) -> List[str]:
             }
     },
     )
-
     content = json.loads(rsp.choices[0].message.content.strip())['queries']
 
     return content
@@ -62,12 +61,11 @@ async def embed(texts: List[str]) -> List[List[float]]:
 
 
 def build_system_prompt() -> str:
-    return (
-        "Answer IN RUSSIAN the question using ONLY the Moodle documentation below."
-        "If the answer is not contained, say you don’t know. Use only info from context. DO NOT make up any information."
-        "You have to use given context for answer!"
-    )
-
+    return "\n".join([
+        "Answer the question IN RUSSIAN using ONLY the Moodle given documentation chunks below.",
+        "Use only info from given documentation. DO NOT make up any information.",
+        "You talk only about Moodle services!"
+    ])
 
 async def query_request(questions_group, embeddings_group, top):
     prefetch = []

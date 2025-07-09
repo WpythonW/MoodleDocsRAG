@@ -24,7 +24,7 @@ docker compose up -d
 
 ### 3. Запуск языковой модели
 ```bash
-vllm serve "Qwen/Qwen2.5-VL-3B-Instruct" --gpu-memory-utilization 0.19 --max_model_len 5000
+vllm serve "Qwen/Qwen3-8B" --gpu-memory-utilization 0.2 --max_model_len 5000
 ```
 
 ### 4. Запуск модели эмбеддингов
